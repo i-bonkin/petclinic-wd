@@ -24,12 +24,15 @@ public class PetclinicRestTest {
      */
     public JSONObject findOwner(String lastName) {
         // получение ответа от сервера
-        String serverResponseBody = given()
+        String serverResponseBody
+                // параметры запроса
+                = given()
                 .accept("application/json")
                 .baseUri(BASE_URI)
                 .when()
                 // GET /api/owners - все хозяева
                 .get("/api/owners")
+                // параметры ответа
                 .then()
                 // ожилаение 2xx кодов - успешных
                 .statusCode(both(greaterThanOrEqualTo(200)).and(lessThan(300)))
@@ -60,6 +63,9 @@ public class PetclinicRestTest {
         // генерация произвольного имени домашнего животного в формате Xxxxx.
         String name = capitalize(randomAlphabetic(5).toLowerCase());
 
+        // генерация даты рождения
+        String birthDate = LocalDate.now().minusDays(7).format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+
         // составления тела запроса на добавление нового домашенго животного
         JSONObject petJsonObj = new JSONObject()
                 // id = null
@@ -67,7 +73,7 @@ public class PetclinicRestTest {
                 // name = сгенерированное имя
                 .put("name", name)
                 // дату рождения выбираем равной текущий день минус 7 дней
-                .put("birthDate", LocalDate.now().minusDays(7).format(DateTimeFormatter.ofPattern("yyyy/MM/dd")))
+                .put("birthDate", birthDate)
                 // в поле тип вводим - bird
                 .put("type", new JSONObject().put("id", 3).put("name", "lizard"))
                 // в поле хозяина вводим JSON описания хозяина
